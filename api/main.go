@@ -7,7 +7,25 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func RegisterHandler() *httprouter.Router {
+type middleWareHandler struct{
+	r *httprouter.Router
+}
+
+func  NewMiddleWareHandler(r *httprouter.Router) http.Handler{ //http.Handler 是个接口 实现了 ServerHTTP/2 方法
+	m := middleWareHandler{}
+	m.r = r
+	return m
+}
+
+func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
+	// check session
+	
+	m.r.ServeHTTP(w, r)
+}
+
+
+
+func RegisterHandler() *httprouter.Router { //Router 也实现了ServeHTTP
 
 	router := httprouter.New()
 
@@ -19,7 +37,11 @@ func RegisterHandler() *httprouter.Router {
 }
 func main() {
 	r := RegisterHandler()
+	mh := NewMiddleWareHandler(r)
 
-	http.ListenAndServe(":8000", r)
+	http.ListenAndServe(":8000", mh)
+	
+	// http.HandleFunc("/", RegisterHandler)
+	// http.ListenAndServe(":8000", r)
 }
 
