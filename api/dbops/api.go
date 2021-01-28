@@ -180,25 +180,42 @@ func ListVedioInfo(username string, from, to int) ([]*defs.VideoInfo, error) {
 //
 ///////////////////////////////////////////////////////////////////////////
 
-func AddNewComments(vid string, aid int, content string) error {
+func AddNewComments(vid string, aid int, content string) (string, error) {
 	id, err := utils.NewUUID()
 	if err != nil {
-		return err
+		return "", err
 	}
 	stmtIns, err := dbConn.Prepare(`INSERT INTO comments (id, video_id, author_id, content)
 	VALUE(?, ?, ?, ?)`)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	_, err = stmtIns.Exec(id, vid, aid, content)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	defer stmtIns.Close()
+	return id, nil
+
+}
+
+func DeleteComments(vid, id string) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM comments WHERE id = ? AND video_id = ?")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmtDel.Exec(id, vid)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmtDel.Close()
 	return nil
 
 }
@@ -218,11 +235,11 @@ func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
 
 	for rows.Next() {
 		var id, name, content, time string
-		if err := rows.Scan(&id, &name, &content); err != nil {
+		if err := rows.Scan(&id, &name, &content, &time); err != nil {
 			return res, err
 		}
 
-		comment := &defs.Comment{Id: id, VideoId: vid, Author: name, Content: content,  }
+		comment := &defs.Comment{Id: id, VideoId: vid, Author: name, Content: content, Time: time}
 		res = append(res, comment)
 	}
 	defer stmtOut.Close()

@@ -11,6 +11,7 @@ import (
 var (
 	tempvid string
 	tempsid string
+	tempcid string
 )
 
 func clearTables() {
@@ -116,15 +117,26 @@ func TestComments(t *testing.T) {
 	t.Run("AddUser", testAddUser)
 	t.Run("AddComments", testAddComment)
 	t.Run("ListComments", testListComments)
+	t.Run("DeleteComments", testDeleteComments)
+	clearTables()
 }
 
 func testAddComment(t *testing.T) {
 	vid := "12345"
 	aid := 1
 	content := "I like this video"
-	err := AddNewComments(vid, aid, content)
+	cid, err := AddNewComments(vid, aid, content)
 	if err != nil {
 		t.Errorf("Error of AddConmments: %v", err)
+	}
+	tempcid = cid
+}
+
+func testDeleteComments(t *testing.T) {
+	vid := "12345"
+	err := DeleteComments(vid, tempcid)
+	if err != nil {
+		t.Errorf("Error of DeleteComments: %v", err)
 	}
 }
 
