@@ -9,6 +9,7 @@ import (
 	"github.com/gitcloneese/video_server/api/defs"
 	"encoding/json"
 	"github.com/gitcloneese/video_server/api/dbops"
+	"github.com/gitcloneese/video_server/api/session"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -22,6 +23,17 @@ func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	
 	if err = dbops.AddUserCredential(ubody.UserName, ubody.Pwd); err != nil{
 		sendErrorResponse(w, defs.ErrorDBError)
+		return
+	}
+	
+	id := session.GenerateNewSessionId(ubody.UserName)
+	su := &defs.SignedUp{Success : true, SessionId : id}
+	
+	if resp, err = json.Marshal(su); err != nil{
+		sendErrorResponse(w, defs.ErrorInternalError)
+		return
+	} else{
+		sendNormalResponse(w, string(resp), 201)
 	}
 	
 }
