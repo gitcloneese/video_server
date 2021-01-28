@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"github.com/gitcloneese/video_server/api/session"
+	"github.com/gitcloneese/video_server/api/defs"
 )
 
 var HEADER_FIELD_SESSION = "X-Session-Id"
@@ -28,7 +29,7 @@ func validateUser(w http.ResponseWriter, r *http.Request) bool{
 	
 	uname := r.Header.Get(HEADER_FIELD_UNAME)
 	if len(uname) == 0 {
-		sendErrorResponse()
+		sendErrorResponse(w, defs.ErrorRequestBodyParseFailed)
 		return false
 	}
 	return true
