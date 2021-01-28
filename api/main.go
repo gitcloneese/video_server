@@ -19,7 +19,7 @@ func  NewMiddleWareHandler(r *httprouter.Router) http.Handler{ //http.Handler �
 
 func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
 	// check session
-	
+	validateUserSession(r)
 	m.r.ServeHTTP(w, r)
 }
 
@@ -29,7 +29,7 @@ func RegisterHandler() *httprouter.Router { //Router 也实现了ServeHTTP
 
 	router := httprouter.New()
 
-	router.GET("/user", CreateUser)
+	router.POST("/user", CreateUser)
 	router.POST("/user/:user_name", Login)
 	
 	return router
