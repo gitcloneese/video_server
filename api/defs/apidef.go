@@ -23,3 +23,8 @@ type Comment struct{
 	Content string
 	Time string
 }
+
+type SimpleSession struct{
+	Usemename string   //login name
+	TTL int64   //time to live
+}
