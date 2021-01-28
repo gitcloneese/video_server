@@ -2,6 +2,12 @@ package dbops
 
 import (
 	"testing"
+	// "github.com/gitcloneese/video_server/api/defs"
+)
+
+var (
+	tempvid string
+	tempsid string
 )
 
 func clearTables() {
@@ -57,4 +63,47 @@ func testRegetUser(t *testing.T) {
 		t.Errorf("Deleting user test Failed")
 	}
 
+}
+
+func TestVideoWorkFlow(t *testing.T) {
+	clearTables()
+	t.Run("PrepareUser", testAddUser)
+	t.Run("AddVideo", testAddVideoInfo)
+	t.Run("GetVideo", testGetVideoInfo)
+	t.Run("DelVideo", testDeleteVideoInfo)
+	t.Run("RegetVideo", testRegetVideoInfo)
+}
+
+func testAddVideoInfo(t *testing.T) {
+	vi, err := AddNewVideo(1, "my-video")
+	if err != nil {
+		t.Errorf("Error of AddVideoInfo: %v", err)
+	}
+	tempvid = vi.Id
+}
+
+func testGetVideoInfo(t *testing.T) {
+	video, err := GetVideoInfo(tempvid)
+	if err != nil {
+		t.Errorf("Error of GetVideoInfo: %v", err)
+	}
+
+	if video.AuthorId != 1 || video.Name != "my-video" {
+		t.Error("Error of GetVideoInfo 2")
+	}
+
+}
+
+func testDeleteVideoInfo(t *testing.T) {
+	err := DelteVideoInfo(tempvid)
+	if err != nil {
+		t.Errorf("Error of DeleteVideoInfo: %v", err)
+	}
+}
+
+func testRegetVideoInfo(t *testing.T) {
+	vi, err := GetVideoInfo(tempvid)
+	if err != nil || vi != nil {
+		t.Errorf("Error of RegetVideoInfo: %v", err)
+	}
 }
