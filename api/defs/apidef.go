@@ -21,4 +21,5 @@ type Comment struct{
 	VideoId string
 	Author string
 	Content string
+	Time string
 }
