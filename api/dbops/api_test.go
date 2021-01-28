@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/gitcloneese/video_server/api/utils"
 )
 
 var (
@@ -154,4 +156,49 @@ func testListComments(t *testing.T) {
 		fmt.Printf("Comments : %d, %v \n", i, element)
 	}
 
+}
+
+func TestSession(t *testing.T) {
+	clearTables()
+	t.Run("TestAddSession", testAddSession)
+	t.Run("TestRetrieveSession", testRetrieveSession)
+	t.Run("testDelteSession", testDeleteSession)
+	t.Run("testreRetrieveSession", testreRetrieveSession)
+	clearTables()
+}
+
+func testAddSession(t *testing.T) {
+	sid, err := utils.NewUUID()
+	if err != nil {
+		t.Errorf("Error of UUID, %v", err)
+	}
+
+	tempsid = sid
+	ttl := int64(129183174987124)
+	err = InsertSession(sid, ttl, "skyone")
+	if err != nil {
+		t.Errorf("Error of InsertSession: %v", err)
+	}
+}
+
+func testRetrieveSession(t *testing.T) {
+	res, err := RetriveSession(tempsid)
+	if err != nil {
+		t.Errorf("Error of RetrieveSession :%v", err)
+	}
+
+	fmt.Printf("session :%v", res)
+}
+
+func testDeleteSession(t *testing.T) {
+	DeleteSession(tempsid)
+}
+
+func testreRetrieveSession(t *testing.T) {
+	res, err := RetriveSession(tempsid)
+	if err != nil || res != nil {
+		t.Errorf("Error of reRetrieveSession:%v ", err)
+	}
+
+	fmt.Printf("session :%v", res)
 }

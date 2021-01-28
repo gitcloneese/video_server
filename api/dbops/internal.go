@@ -43,6 +43,10 @@ func RetriveSession(sid string) (*defs.SimpleSession, error) {
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
+	// 这里是不要忘了
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 
 	if res, err := strconv.ParseInt(ttl, 10, 64); err != nil {
 		return nil, err
