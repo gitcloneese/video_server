@@ -51,6 +51,14 @@ CREATE TABLE `sessions` (
   	PRIMARY KEY (`session_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for video_del_rec;
+-- ----------------------------
+DROP TABLE IF EXISTS `video_del_rec`;
+CREATE TABLE `video_del_rec` (
+	`video_id` varchar(64) NOT NULL,
+  	PRIMARY KEY (`video_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
