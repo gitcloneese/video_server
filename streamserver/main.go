@@ -20,7 +20,7 @@ func NewMiddleWardHandler(r *httprouter.Router, cc int) http.Handler {
 }
 
 func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if !m.l.GetConn() {
+	if m.l.GetConn() == false {
 		sendErrorResponse(w, http.StatusTooManyRequests, "Too Many Requests")
 		return
 	}
@@ -33,7 +33,8 @@ func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func RegisterHandler() *httprouter.Router {
 	router := httprouter.New()
 	router.GET("/videos/:vid-id", StreamHandler)
-	router.POST("/upload:vid-id", UploadHandler)
+	router.POST("/upload/:vid-id", UploadHandler)
+	router.GET("/testpage", TestPageHandler)
 
 	return router
 }
