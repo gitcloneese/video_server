@@ -3,7 +3,7 @@ package scheduler
 import (
 	"net/http"
 
-	"./taskrunner"
+	"github.com/gitcloneese/video_server/scheduler/taskrunner"
 
 	"github.com/julienschmidt/httprouter"
 )
