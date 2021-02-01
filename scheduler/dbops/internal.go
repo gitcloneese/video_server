@@ -7,15 +7,17 @@ import (
 )
 
 func ReadVideoDeletionRecord(count int) ([]string, error) {
-	stmtOut, err := dbConn.Prepare(`SELECT video_id FROM video_del_rec LIMIT ?`)
+	stmtOut, err := dbConn.Prepare("SELECT video_id FROM video_del_rec limit ?")
 	var ids []string
+
 	if err != nil {
 		return ids, err
 	}
 
 	rows, err := stmtOut.Query(count)
+
 	if err != nil {
-		log.Printf("Query VideoDeletionRecord Error: %v", err)
+		log.Printf("ReadVideoDeletionRecord query error :%v", err)
 		return ids, err
 	}
 
@@ -29,8 +31,8 @@ func ReadVideoDeletionRecord(count int) ([]string, error) {
 	}
 
 	defer stmtOut.Close()
-
 	return ids, nil
+
 }
 
 func DelVideoDeletionRecord(vid string) error {
@@ -38,14 +40,13 @@ func DelVideoDeletionRecord(vid string) error {
 	if err != nil {
 		return err
 	}
-	_, err = stmtDel.Exec(vid)
 
+	_, err = stmtDel.Exec(vid)
 	if err != nil {
-		log.Printf("Deleting VideoDeletionRecord error: %v", err)
+		log.Printf("DelVideoDeletionRecord Error :%v", err)
 		return err
 	}
 
 	defer stmtDel.Close()
 	return nil
-
 }
