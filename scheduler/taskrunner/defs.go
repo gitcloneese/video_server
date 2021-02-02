@@ -1,13 +1,9 @@
 package taskrunner
 
-
 const (
-	REDAY_TO_DISPATCH = "d"
-	READY_TO_EXECUTE  = "e"
-	CLOSE 			  = "c"
-	
-	
-	VIDEO_PATH = "./videos/"
+	READY_TO_DISPATCH = "d"
+	READY_TO_EXECUTOR = "e"
+	CLOSE             = "c"
 )
 
 type controlChan chan string

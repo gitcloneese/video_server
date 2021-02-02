@@ -16,12 +16,11 @@ func TestRunner(t *testing.T) {
 	}
 
 	e := func(dc dataChan) error {
-
 	forloop:
 		for {
 			select {
 			case d := <-dc:
-				log.Printf("Executor received :%v", d)
+				log.Printf("Executor received: %v", d)
 			default:
 				break forloop
 			}
@@ -30,6 +29,7 @@ func TestRunner(t *testing.T) {
 	}
 
 	runner := NewRunner(30, false, d, e)
-	go runner.StartAll()
-	time.Sleep(3 * time.Second)
+	go runner.startAll()
+	time.Sleep(5 * time.Second)
+
 }

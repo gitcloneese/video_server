@@ -6,7 +6,7 @@ type Runner struct {
 	Data       dataChan
 	datasize   int
 	longlived  bool
-	Dispather  fn
+	Dispatcher fn
 	Executor   fn
 }
 
@@ -17,38 +17,39 @@ func NewRunner(size int, longlived bool, d fn, e fn) *Runner {
 		Data:       make(chan interface{}, size),
 		longlived:  longlived,
 		datasize:   size,
-		Dispather:  d, //生产者
-		Executor:   e, //消费者
+		Dispatcher: d,
+		Executor:   e,
 	}
 }
 
-func (r *Runner) startDisPatch() {
+func (r *Runner) startDispatcher() {
 	defer func() {
-		if r.longlived == false {
+		if !r.longlived {
 			close(r.Controller)
-			close(r.Data)
 			close(r.Error)
+			close(r.Data)
 		}
 
 	}()
 	for {
 		select {
 		case c := <-r.Controller:
-			if c == REDAY_TO_DISPATCH {
-				err := r.Dispather(r.Data)
+			if c == READY_TO_DISPATCH {
+				err := r.Dispatcher(r.Data)
 				if err != nil {
 					r.Error <- CLOSE
+
 				} else {
-					r.Controller <- READY_TO_EXECUTE
+					r.Controller <- READY_TO_EXECUTOR
 				}
 			}
-
-			if c == READY_TO_EXECUTE {
+			
+			if c == READY_TO_EXECUTOR {
 				err := r.Executor(r.Data)
 				if err != nil {
 					r.Error <- CLOSE
 				} else {
-					r.Controller <- REDAY_TO_DISPATCH
+					r.Controller <- READY_TO_DISPATCH
 				}
 			}
 
@@ -56,18 +57,15 @@ func (r *Runner) startDisPatch() {
 			if e == CLOSE {
 				return
 			}
+		default:
 
-			// default :
 		}
 	}
+
 }
 
-func (r *Runner) StartAll() {
-	/*
-		开启前要放一个 REDAY_TO_DISPATCH ,要不然永远都进不去 
-		处理data
-	*/
-	r.Controller <- REDAY_TO_DISPATCH
-	r.startDisPatch()
 
+func (r *Runner) startAll() {
+	r.Controller <- READY_TO_DISPATCH
+	r.startDispatcher()
 }
